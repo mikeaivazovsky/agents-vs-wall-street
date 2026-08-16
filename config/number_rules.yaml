@@ -1,0 +1,68 @@
+# Rules for turning a printed figure into a usable one, and for rejecting a
+# figure that cannot be what it claims to be.
+#
+# These are not forecasts and they are not opinions about any company. They
+# state what a unit can hold at all. A margin expressed as a percentage cannot
+# be six million per cent, and an amount per share cannot be twelve million
+# dollars, whatever the company. A figure outside these limits is a reading
+# error rather than a surprising result, and is dropped with the reason
+# recorded.
+#
+# Anything narrower than this, such as what a particular company's revenue has
+# actually ranged between, belongs in a later stage that measures it from the
+# extracted history rather than asserting it here.
+
+# Words that state how much a printed figure has been abbreviated by, and the
+# factor that converts it to the unit we want. Read from inside the table or
+# from the caption above it, never assumed.
+scale_words:
+  thousands: 0.001
+  millions: 1.0
+  billions: 1000.0
+  # Currency shorthand printed beside a year, as Hays does with "2019<br>£m".
+  "£m": 1.0
+  "$m": 1.0
+  "€m": 1.0
+  "£bn": 1000.0
+  "$bn": 1000.0
+
+# A chart axis converts to a table row of evenly spaced tick marks, for example
+# "OPERATING PROFIT | 300 | 375 | 450". Evenly spaced figures three or more
+# long are axis labels rather than reported results, and reported financials
+# are almost never exactly evenly spaced.
+reject_even_spacing:
+  enabled: true
+  minimum_length: 3
+
+units:
+  "%":
+    # A percentage line in a set of accounts is a margin or a growth rate.
+    # Growth can exceed one hundred per cent, so the upper limit is loose, but
+    # nothing in these statements is thousands of per cent.
+    min: -500.0
+    max: 500.0
+    # A row can print a money amount and its percentage side by side, as a
+    # gross margin line does. When it happens, take the cell that carries the
+    # per cent sign rather than the first number in the row.
+    prefer_marked: "%"
+
+  "USD / share":
+    min: -100.0
+    max: 100.0
+
+  "GBp":
+    # Pence per share. Hays has reported both losses and low single digit
+    # earnings, so the range spans zero.
+    min: -500.0
+    max: 500.0
+    prefer_marked: "p"
+
+  "USDm":
+    # Millions of dollars. The widest company here reports tens of billions a
+    # year, so anything past a million million is a lost scale factor.
+    min: -1000000.0
+    max: 1000000.0
+
+  "GBPm":
+    min: -100000.0
+    max: 100000.0

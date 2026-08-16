@@ -2,3 +2,10 @@
 artifacts/
 entry.json
 node_modules/
+PROGRESS.md
+.venv/
+__pycache__/
+.DS_Store
+src/run/
+challenge/
+ */__pycache__/*

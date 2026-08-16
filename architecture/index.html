@@ -1,74 +1,381 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Agent architecture — team name</title>
-  <style>
-    :root { color-scheme: light; --ink:#101828; --muted:#667085; --line:#d0d5dd; --blue:#155eef; --paper:#fff; --wash:#f8fafc; }
-    * { box-sizing: border-box; }
-    body { margin: 0; color: var(--ink); background: var(--wash); font: 16px/1.65 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    main { width: min(920px, calc(100% - 32px)); margin: 40px auto; padding: clamp(24px, 6vw, 64px); background: var(--paper); border: 1px solid var(--line); border-radius: 20px; }
-    h1 { margin: 0 0 8px; font-size: clamp(40px, 8vw, 72px); line-height: .98; letter-spacing: -.05em; }
-    h2 { margin: 48px 0 12px; font-size: 24px; letter-spacing: -.02em; }
-    p, li { max-width: 72ch; }
-    .eyebrow { color: var(--blue); font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-    .lede { color: var(--muted); font-size: 20px; }
-    .card { margin-top: 24px; padding: 20px; background: var(--wash); border: 1px solid var(--line); border-radius: 12px; }
-    code { padding: 2px 6px; border-radius: 5px; background: #eef4ff; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agents vs Wall Street - architecture</title>
+<style>
+  :root{
+    --ink:#101828; --muted:#667085; --line:#e4e7ec; --bg:#ffffff; --panel:#f9fafb;
+    --accent:#155eef; --warn:#b54708; --good:#067647; --code:#f2f4f7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:940px;margin:0 auto;padding:40px 24px 80px}
+  header{border-bottom:3px solid var(--ink);padding-bottom:20px;margin-bottom:36px}
+  h1{font-size:30px;line-height:1.2;margin:0 0 8px}
+  .sub{color:var(--muted);font-size:15px;margin:0}
+  h2{font-size:21px;margin:44px 0 12px;padding-top:20px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:26px 0 8px}
+  p{margin:0 0 14px}
+  ul,ol{margin:0 0 14px;padding-left:22px}
+  li{margin-bottom:6px}
+  code{background:var(--code);padding:1px 5px;border-radius:3px;font-size:13.5px;
+       font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  pre{background:var(--code);padding:14px 16px;border-radius:6px;overflow-x:auto;
+      font-size:13px;line-height:1.55;margin:0 0 16px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  table{border-collapse:collapse;width:100%;font-size:14.5px;margin:0 0 16px;display:block;overflow-x:auto}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel);font-weight:600}
+  td.num{text-align:right;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;white-space:nowrap}
+  .lead{font-size:17px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+         padding:14px 18px;border-radius:0 6px 6px 0;margin:0 0 18px}
+  .panel.warn{border-left-color:var(--warn)}
+  .panel.good{border-left-color:var(--good)}
+  .panel p:last-child{margin-bottom:0}
+  .k{font-weight:600}
+  .muted{color:var(--muted)}
+  figure{margin:0 0 22px}
+  figcaption{color:var(--muted);font-size:13.5px;margin-top:8px}
+  svg{max-width:100%;height:auto;display:block}
+</style>
 </head>
 <body>
-  <main>
-    <p class="eyebrow">Agents vs Wall Street</p>
-    <h1>Team name</h1>
-    <p class="lede">In one sentence, explain what your agent does and what makes the approach worth understanding.</p>
+<div class="wrap">
 
-    <div class="card">
-      <p>Agent name: <strong>add agent name</strong></p>
-      <p>Team: <strong>add everyone's name</strong></p>
-      <p>Build style and harness: <strong>add headless agent, coding harness or hybrid setup</strong></p>
-      <p>Models: <strong>add the primary models</strong></p>
-    </div>
+<header>
+  <h1>Reading the filings, then doing the arithmetic</h1>
+  <p class="sub">Agents vs Wall Street &middot; 16 August 2026 &middot; four companies, twelve figures, one command</p>
+</header>
 
-    <section>
-      <h2>How it works</h2>
-      <p>Explain the path from a company ticker to the three forecasts. Name the main stages, models, tools and data sources. A simple diagram is welcome.</p>
-    </section>
+<p class="lead">The guiding rule of this system is a division of labour: <span class="k">deterministic code where
+the data is structured, a model only where it is not.</span> Financial statements are tables, and a parser reads a
+table more cheaply, more repeatably and more accurately than a language model does. Management commentary is
+prose, and there a model earns its place.</p>
 
-    <section>
-      <h2>Research and financial reasoning</h2>
-      <p>Explain how the agent finds information, interprets the requested metrics and units, deals with conflicting evidence and turns the research into a forecast.</p>
-    </section>
+<p>Everything below is what runs today. Where a stage is designed but not built, it says so.</p>
 
-    <section>
-      <h2>Important design choices</h2>
-      <p>Describe the decisions that most affected autonomy, quality, runtime or cost. Include the alternatives you rejected and why.</p>
-    </section>
+<h2>How a figure is produced</h2>
 
-    <section>
-      <h2>Checks and tests</h2>
-      <p>Show how the system catches missing information, bad units, implausible values, malformed workbooks and failed model calls. Explain what you tested and what happened.</p>
-    </section>
+<figure>
+<svg viewBox="0 0 900 400" role="img" aria-label="Pipeline from document corpus to submitted workbook">
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#667085"/>
+    </marker>
+    <style>
+      .box{fill:#f9fafb;stroke:#d0d5dd;stroke-width:1.5}
+      .built{fill:#eff4ff;stroke:#155eef;stroke-width:1.5}
+      .todo{fill:#fffaf5;stroke:#b54708;stroke-width:1.5;stroke-dasharray:5 3}
+      .t{font:13px ui-monospace,Menlo,monospace;fill:#101828}
+      .s{font:11px -apple-system,sans-serif;fill:#667085}
+      .h{font:600 12px -apple-system,sans-serif;fill:#667085;letter-spacing:.06em}
+      .ln{stroke:#667085;stroke-width:1.4;fill:none;marker-end:url(#a)}
+    </style>
+  </defs>
 
-    <section>
-      <h2>Reproducing the run</h2>
-      <p>State what someone needs to install or configure, the command they run and any remaining human input. Explain how the system accepts the company and metric specification.</p>
-    </section>
+  <text x="10" y="20" class="h">SOURCES</text>
+  <rect class="box" x="10" y="30" width="180" height="54" rx="6"/>
+  <text x="22" y="52" class="t">docs_listing.py</text>
+  <text x="22" y="70" class="s">1 139 documents, front matter</text>
 
-    <section>
-      <h2>Known weaknesses</h2>
-      <p>Be specific about where the agent still needs human help, where it may fail and what you would improve next.</p>
-    </section>
+  <text x="10" y="120" class="h">EXTRACT &middot; static</text>
+  <rect class="built" x="10" y="130" width="180" height="50" rx="6"/>
+  <text x="22" y="150" class="t">tables_aligning.py</text>
+  <text x="22" y="167" class="s">ragged markdown to a grid</text>
 
-    <section>
-      <h2>How to reproduce the final run</h2>
-      <div class="card">
-        <p>Final commit: <code>add commit hash</code></p>
-        <p>Final command: <code>add command</code></p>
-        <p>Expected output: four completed workbooks in <code>submission/</code>.</p>
-      </div>
-    </section>
-  </main>
+  <rect class="built" x="10" y="188" width="180" height="50" rx="6"/>
+  <text x="22" y="208" class="t">history_number_...py</text>
+  <text x="22" y="225" class="s">value, scale, period, quote</text>
+
+  <rect class="built" x="10" y="246" width="180" height="50" rx="6"/>
+  <text x="22" y="266" class="t">fiscal_calendar_...py</text>
+  <text x="22" y="283" class="s">when each year closes</text>
+
+  <rect class="built" x="10" y="304" width="180" height="50" rx="6"/>
+  <text x="22" y="324" class="t">numbers_presenter.py</text>
+  <text x="22" y="341" class="s">dedupe, cross-check, trust</text>
+
+  <text x="250" y="120" class="h">VALIDATE</text>
+  <rect class="built" x="250" y="130" width="170" height="50" rx="6"/>
+  <text x="262" y="150" class="t">number_rules_...py</text>
+  <text x="262" y="167" class="s">what a unit can hold</text>
+
+  <text x="250" y="215" class="h">EVIDENCE</text>
+  <rect class="box" x="250" y="225" width="170" height="66" rx="6"/>
+  <text x="262" y="246" class="t">artifacts/&lt;T&gt;/</text>
+  <text x="262" y="263" class="s">history.json</text>
+  <text x="262" y="279" class="s">file, line, quote per figure</text>
+
+  <text x="480" y="120" class="h">DECISION MODEL</text>
+  <rect class="built" x="480" y="130" width="190" height="50" rx="6"/>
+  <text x="492" y="150" class="t">history_analyzer.py</text>
+  <text x="492" y="167" class="s">seasonal extrapolation</text>
+
+  <rect class="todo" x="480" y="188" width="190" height="50" rx="6"/>
+  <text x="492" y="208" class="t">guidance_analyzer.py</text>
+  <text x="492" y="225" class="s">not built yet</text>
+
+  <rect class="todo" x="480" y="246" width="190" height="50" rx="6"/>
+  <text x="492" y="266" class="t">side_factors_...py</text>
+  <text x="492" y="283" class="s">not built yet</text>
+
+  <rect class="built" x="480" y="304" width="190" height="50" rx="6"/>
+  <text x="492" y="324" class="t">llm_adjuster.py</text>
+  <text x="492" y="341" class="s">bounded correction, gpt-5.1</text>
+
+  <text x="720" y="180" class="h">DECIDE</text>
+  <rect class="built" x="720" y="190" width="170" height="60" rx="6"/>
+  <text x="732" y="212" class="t">metric_forecaster</text>
+  <text x="732" y="229" class="s">weighs whatever exists</text>
+  <text x="732" y="245" class="s">guidance .6 / history .4</text>
+
+  <text x="720" y="290" class="h">OUTPUT</text>
+  <rect class="box" x="720" y="300" width="170" height="54" rx="6"/>
+  <text x="732" y="322" class="t">writer.py</text>
+  <text x="732" y="339" class="s">submission/*.xlsx</text>
+
+  <path class="ln" d="M100,86 L100,126"/>
+  <path class="ln" d="M194,205 L246,162"/>
+  <path class="ln" d="M194,329 L246,272"/>
+  <path class="ln" d="M424,250 L476,180"/>
+  <path class="ln" d="M424,268 L476,322"/>
+  <path class="ln" d="M674,155 L716,203"/>
+  <path class="ln" d="M674,329 L716,242"/>
+  <path class="ln" d="M805,254 L805,296"/>
+</svg>
+<figcaption>Solid blue is built and running. Dashed amber is designed and already wired into the decision, but not
+yet implemented. Everything left of the decision model runs without a network call.</figcaption>
+</figure>
+
+<pre>forecast.py -> pipeline -> gather (history) -> history_analyzer -> llm_adjuster -> metric_forecaster -> writer</pre>
+
+<h2>Why the split is where it is</h2>
+
+<table>
+  <tr><th>Task</th><th>Done by</th><th>Why</th></tr>
+  <tr><td>Select candidate documents</td><td>Python</td><td>Front matter is machine readable</td></tr>
+  <tr><td>Read a financial statement table</td><td>Python</td><td>The data is a grid; a parser is exact, free and repeatable</td></tr>
+  <tr><td>Read scale, period and reporting span</td><td>Python</td><td>All three are printed in or above the table</td></tr>
+  <tr><td>Reject an impossible figure</td><td>Python</td><td>A unit constrains what it can hold</td></tr>
+  <tr><td>Extrapolate the next period</td><td>Python</td><td>See the note on research below</td></tr>
+  <tr><td>Judge whether the extrapolation is fair</td><td><span class="k">Model</span></td><td>Requires reading a cycle, not a cell</td></tr>
+  <tr><td>Read guidance out of prose <span class="muted">(designed)</span></td><td><span class="k">Model</span></td><td>There is no structure to parse</td></tr>
+</table>
+
+<div class="panel">
+<p><span class="k">The research is why the arithmetic anchors and the model corrects, not the reverse.</span>
+GPT-4 forecasts of earnings carry larger errors than analyst consensus and lean optimistic. On quarterly earnings
+per share, seasonal extrapolation and a fine-tuned time series model showed the lowest errors, and analysts beat
+seasonal extrapolation only slightly more often than not. This competition scores our miss against Wall Street's
+miss, so a forecast produced by a model alone would be expected to lose by construction.</p>
+</div>
+
+<h2>What the extraction stage actually had to solve</h2>
+
+<p>The corpus converts published documents to markdown, and the conversion is lossy in ways that quietly corrupt
+figures. Each of these was found by reading the extractor's own output, and each is now a rule.</p>
+
+<table>
+  <tr><th>Trap</th><th>What it looked like</th><th>Consequence if missed</th></tr>
+  <tr><td>Segment beside company</td><td><code>Net sales</code> appears twice in one filing: 41,765 under
+      <em>consolidated statements of earnings</em>, 37,763 under <em>our primary segment</em></td>
+      <td>A figure ten per cent low, with the right label and the right unit</td></tr>
+  <tr><td>Header shorter than the row</td><td>A blank label cell vanishes when the row is evened out, so every date
+      sits one column to the left of its figure</td><td>Every Analog Devices period dated a year early</td></tr>
+  <tr><td>Invisible padding</td><td>Deere pads cells with U+200B, which Python does not count as whitespace</td>
+      <td>Columns misaligned throughout Deere</td></tr>
+  <tr><td>Scale stated outside the table</td><td><code>(In thousands)</code> printed above it rather than inside</td>
+      <td>Revenue of 12,739,993 instead of 12,740</td></tr>
+  <tr><td>Footnote read as a figure</td><td><code>| Net fees (1) | 3,5 | 1,113.6 |</code> where the first cell means
+      "footnotes 3 and 5"</td><td>Net fees of 35 instead of 1,113.6</td></tr>
+  <tr><td>Percentage read as money</td><td>A slide's money cells break in conversion, leaving the growth rate as the
+      first cell that parses</td><td>A per cent recorded as millions</td></tr>
+  <tr><td>Chart axis read as data</td><td><code>| OPERATING PROFIT | 300 | 375 | 450 |</code></td>
+      <td>Axis ticks entering the history</td></tr>
+</table>
+
+<h2>Three levels of trust, and why they exist</h2>
+
+<p>A figure that parses cleanly is not therefore correct. Trust is assigned by comparing documents against each
+other, because the same figure is printed many times and independent conversions agreeing is the strongest
+evidence available here.</p>
+
+<table>
+  <tr><th>Level</th><th>Meaning</th></tr>
+  <tr><td><code>confirmed</code></td><td>Nothing contradicts it, and either the reading raised no concern or
+      separate documents agree on it</td></tr>
+  <tr><td><code>conflicted</code></td><td>Another document states a different figure for the same period, so at
+      least one reading is wrong</td></tr>
+  <tr><td><code>doubtful</code></td><td>Nothing contradicts it, but a concern was recorded and no second document
+      backs it up</td></tr>
+</table>
+
+<div class="panel good">
+<p><span class="k">Only confirmed figures reach the forecast.</span> This was tested rather than assumed. Of the
+doubtful figures that could be checked against a confirmed one for the same period, <span class="k">0 of 78
+agreed</span>. They are typically real numbers carrying the wrong period, an annual total sitting in a quarterly
+series, which destroys both the trend and the seasonal shape it is meant to inform.</p>
+</div>
+
+<h2>From history to a figure</h2>
+
+<p>Two kinds of metric behave differently and are treated differently.</p>
+
+<ul>
+  <li><span class="k">Flows</span> - revenue, profit, earnings per share - compound. They are carried forward by
+      multiplying the same period a year earlier by the median growth of recent periods. The comparison is year on
+      year rather than quarter on quarter because these businesses are seasonal: Home Depot sells most in spring,
+      Deere in the planting season.</li>
+  <li><span class="k">Ratios</span> - gross margin, comparable sales - do not compound. Doubling revenue does not
+      double a margin. They are carried from their recent level by the amount they have typically moved.</li>
+</ul>
+
+<p>The median is used rather than the mean so that one exceptional quarter does not set the rate for the next.</p>
+
+<h3>Combining signals when some are missing</h3>
+
+<pre>guidance 0.6   management is describing a period already trading
+history  0.4   extrapolation only knows the past
+
+weights are normalised over whichever signals exist,
+so a lone signal takes the full weight</pre>
+
+<p>Commentary does not produce a figure of its own. It produces a proportional correction, capped at ten per cent,
+applied after the reported evidence has spoken. A missing signal lowers the support behind an answer and is named
+in the run record, but never stops a figure being produced: an empty cell scores the maximum penalty.</p>
+
+<h2>Guarding against a biased model</h2>
+
+<p>These are the failure modes Iexpect from putting a language model near a forecast, and what the design does
+about each.</p>
+
+<table>
+  <tr><th>Risk</th><th>Mitigation</th><th>State</th></tr>
+  <tr><td><span class="k">Memorisation leakage.</span> The target periods are unreported, but the model may recall
+      news, comment or third-party forecasts</td><td>The prompt states that the model has no knowledge after the
+      last period shown and must not use recollection of the company</td><td>In place</td></tr>
+  <tr><td><span class="k">Anchoring on guidance.</span> Once guidance sits in the prompt the model stays near it
+      whatever the evidence</td><td>Guidance is weighed arithmetically outside the model and never placed in its
+      prompt</td><td>By construction</td></tr>
+  <tr><td><span class="k">Narrative tone contamination.</span> Management comment is optimistic by construction, and
+      a model reading a transcript inherits its sentiment; text can also be read as instruction</td>
+      <td>The model sees only the numeric series, never the prose, and its correction is capped</td><td>In place</td></tr>
+  <tr><td><span class="k">Coverage asymmetry.</span> Training data holds far more about Home Depot than about Hays,
+      reproducing inside the model the coverage gap the challenge attributes to human analysts</td>
+      <td>Identical prompt, identical series length and identical bounds for all four companies</td><td>In place</td></tr>
+  <tr><td><span class="k">Prompt framing.</span> Wording becomes part of the forecast</td>
+      <td>One fixed prompt, temperature zero, answers cached by hash so a rerun cannot drift</td><td>In place</td></tr>
+  <tr><td><span class="k">Obliging behaviour.</span> Asked to review, a model finds something to change</td>
+      <td>The prompt states that zero is a correct and expected answer</td>
+      <td><span class="k">Insufficient - see weaknesses</span></td></tr>
+</table>
+
+<h2>Every figure is traceable</h2>
+
+<p>No number reaches a workbook without a chain back to the document it came from. The run log names the file and
+the line for each figure the forecast rests on.</p>
+
+<pre>adi_revenue | history: the same period a year earlier reported 2,880.35
+  [analog-devices/filings/2025-08-21__adi-us-20250821-q3-10q__143765.md:834]
+  and recent periods have grown +24.6% ...
+
+adi_revenue | evidence | 2026-01-31 = 3,160.26
+  | analog-devices/filings/2026-02-18__adi-us-20260218-q1-10q__602087.md:157
+  | | Revenue | $ 3,160,263 | $ 2,423,174 |
+
+adi_revenue | value 3301.039 | unit USDm | cell ADI-FY2026Q3.xlsx!C7</pre>
+
+<p>Open the file, go to line 157, and the row is there. This is not decoration: the audit trail is how Ifound
+the Analog Devices date bug described below, an hour before the deadline.</p>
+
+<h2>Reliability of the run</h2>
+
+<ul>
+  <li>Each company is processed independently. A failure on the third does not lose the first two.</li>
+  <li>The history is written to <code>artifacts/</code> before any figure is decided from it, so the record of what
+      the run had to work with survives a later failure.</li>
+  <li>Model answers are cached by a hash covering the model, the prompt and the input, so a rerun in the final
+      window costs nothing and returns the same figures.</li>
+  <li>An unreachable model returns nothing and the decision falls back to arithmetic. No figure depends on a call
+      succeeding.</li>
+  <li>Units are a type, not a convention. The writer refuses a figure whose unit does not match the specification
+      for the cell, and reads back the label and unit printed beside that cell before writing.</li>
+  <li>The whole run takes about thirty seconds and reads 1 139 documents.</li>
+</ul>
+
+<h2>What is weak, and what Iwould fix next</h2>
+
+<div class="panel warn">
+<p><span class="k">Four of the twelve figures rest on history Iknow is misread.</span> The extractor takes a row
+whose label matches but whose meaning does not: for Hays it captures a division rather than the group, for Analog
+Devices' gross margin a dollar line rather than the percentage, for Deere's earnings per share an annual figure
+rather than a quarter. The citations show this plainly, because the trail leads to the wrong row and the wrong row
+is visible. The forecast then extrapolates it faithfully. <span class="k">The arithmetic is not the problem; the
+input is.</span></p>
+</div>
+
+<div class="panel warn">
+<p><span class="k">The model's sign does not always follow its own reasoning.</span> On Home Depot's adjusted
+earnings per share it argued that declines had steepened and that the extrapolation was too optimistic, then
+returned a correction of plus three per cent. The schema does not tie the direction to the argument. The fix is a
+separate direction field checked against the sign, and a second independent answer required to agree before any
+correction is applied.</p>
+</div>
+
+<div class="panel warn">
+<p><span class="k">The model almost never answers zero.</span> Across twelve metrics it declined to adjust once.
+The rest cluster between five and eight per cent, near the cap. The prompt says that zero is expected; that is
+evidently not enough on its own.</p>
+</div>
+
+<p>Also unfinished, in the order Iwould take them:</p>
+<ol>
+  <li><span class="k">Guidance.</span> The strongest missing signal. Management states what it expects for the very
+      period being forecast. The language is narrow enough to filter cheaply: 159 candidate
+      paragraphs across all four companies once documents older than the last reported quarter are dropped, about
+      28 000 tokens.</li>
+  <li><span class="k">Side factors</span> - demand, pricing, input costs, rates, regulation - read from call
+      transcripts, which contain no tables at all and are therefore genuinely a model's job.</li>
+  <li><span class="k">Repair the four broken series</span>, most usefully by requiring a group total rather than a
+      division, and by pinning the reporting basis to the row label.</li>
+</ol>
+
+<h2>What Itried and changed</h2>
+
+<ul>
+  <li><span class="k">A hand written plausible range per metric was removed.</span> It looked like validation, but
+      the bounds were invented, which is worse than no check at all. What replaced it states only what a unit can
+      physically hold, and company-specific bounds will be measured from history instead.</li>
+  <li><span class="k">Widening the search for dates raised apparent confidence from 48 to 62 per cent, and the gain
+      was false.</span> Dates taken from beside a table were attached to whichever figure came first. The
+      cross-document check exposed it, and a date from anywhere but the column itself is now marked unsettled.</li>
+  <li><span class="k">The specification was cut back</span> to hold only what the organisers' own
+      <code>companies.json</code> does not state: the sheet and the cell. Labels, units, periods and file names are
+      read from their file, so the two cannot drift apart.</li>
+  <li><span class="k">Placeholders were made obviously wrong on purpose.</span> While the forecaster was being
+      built the cells held zero and the run exited non-zero, because a plausible looking placeholder can be
+      uploaded by mistake and a zero cannot.</li>
+</ul>
+
+<h2>Running it</h2>
+
+<pre>poetry install
+poetry run python forecast.py</pre>
+
+<p>One command produces all four workbooks in <code>submission/</code>, four history files in
+<code>artifacts/</code> and one timestamped log in <code>logs/</code>. It exits non-zero if any workbook is missing
+or if any figure is still a placeholder. Uploads to OpenStocks are manual; nothing in this repository submits
+anything.</p>
+
+<p>Results justification can be found in logs/. Just open log file and search for ADI-revenew, for example.</p>
+
+<p class="muted" style="margin-top:36px;font-size:13.5px">Python 3.12 under poetry, with openpyxl, pydantic,
+pyyaml and openai. Node is present only to run the organisers' submission checks.</p>
+
+</div>
 </body>
 </html>

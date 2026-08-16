@@ -1,0 +1,86 @@
+# Where each figure goes in its workbook.
+#
+# This file deliberately holds nothing that challenge/companies.json already
+# states. The organisers define the companies, tickers, periods, output file
+# names, metric labels and units there, and that file is the authority for all
+# of it. Repeating any of it here would create a second version that can drift
+# out of step with the first.
+#
+# What is left is the one thing the organisers publish only inside the
+# workbooks themselves: the position of the input cell.
+#
+# Each entry is joined to companies.json by ticker and label. Both must match
+# character for character, including the LSE: prefix on the Hays ticker. A
+# metric present in one file and missing from the other stops the run.
+#
+# Holding the address here rather than searching the template for it gives two
+# independent statements of where a figure belongs. The writer reads back the
+# label and unit printed beside the target cell and refuses to write when they
+# disagree with this file, which is the only cross-check standing between a
+# figure and the wrong cell.
+#
+# Cell positions were read from the template xml. Every template has the same
+# shape: row 6 holds the Metric, Units and period header, rows 7 to 9 hold the
+# three metrics, column A holds the label, column B the unit and column C the
+# input cell shown with a pale yellow fill.
+
+metrics:
+  - ticker: HD
+    label: "Net sales"
+    sheet: Summary
+    cell: C7
+
+  - ticker: HD
+    label: "Adjusted diluted EPS"
+    sheet: Summary
+    cell: C8
+
+  - ticker: HD
+    label: "Comparable sales, total company"
+    sheet: Summary
+    cell: C9
+
+  - ticker: ADI
+    label: "Revenue"
+    sheet: Summary
+    cell: C7
+
+  - ticker: ADI
+    label: "Adjusted diluted EPS"
+    sheet: Summary
+    cell: C8
+
+  - ticker: ADI
+    label: "Adjusted gross margin"
+    sheet: Summary
+    cell: C9
+
+  - ticker: "LSE:HAS"
+    label: "Net fees"
+    sheet: Summary
+    cell: C7
+
+  - ticker: "LSE:HAS"
+    label: "Pre-exceptional basic EPS"
+    sheet: Summary
+    cell: C8
+
+  - ticker: "LSE:HAS"
+    label: "Pre-exceptional operating profit"
+    sheet: Summary
+    cell: C9
+
+  - ticker: DE
+    label: "Worldwide net sales and revenues"
+    sheet: Summary
+    cell: C7
+
+  - ticker: DE
+    label: "Diluted EPS (GAAP)"
+    sheet: Summary
+    cell: C8
+
+  - ticker: DE
+    label: "Production & Precision Ag operating profit"
+    sheet: Summary
+    cell: C9

@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "agents-vs-wall-street"
+version = "0.1.0"
+description = ""
+authors = ["Diana Shidakova <superdia@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+openai = "^3.1.0"
+python-dotenv = "^1.2.2"
+openpyxl = "^3.1.5"
+pyyaml = "^6.0.3"
+pydantic = "^2.13.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

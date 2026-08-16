@@ -1,0 +1,180 @@
+# How each required figure is named inside the documents.
+#
+# challenge/companies.json gives one label per metric, the one printed in the
+# workbook. Companies do not use that exact wording in their own statements, so
+# this file lists the row labels to look for instead. It is data rather than
+# code because it is a list of names that grows as documents are read, not a
+# rule that needs testing.
+#
+# synonyms are matched against the first cell of a table row, after lowercasing
+# and collapsing spaces. A match must be the whole cell, so that "Net sales"
+# does not also match "Net sales by segment".
+#
+# ignore_captions is matched against the line of text above a table. Company
+# reports contain tables of executive pay and share ownership that repeat the
+# same words as the financial statements. Deere is the clearest case: the
+# phrase "Production & Precision Agriculture" appears both as a reporting
+# segment and inside a named officer's job title in the pay tables, so a table
+# under a pay caption is never read.
+
+ignore_captions:
+  - compensation
+  - remuneration
+  - beneficial owner
+  - security ownership
+  - equity awards
+  - option awards
+  - pension benefits
+  - director fees
+  - audit fees
+  - grants of plan-based awards
+  - outstanding equity
+
+# A metric may add its own ignore_captions on top of the shared list above.
+# This is how a company total is kept apart from a segment total. Home Depot
+# prints "Net sales" twice in the same filing: once in the consolidated
+# statement of earnings, the company as a whole, and once for its primary
+# segment, which excludes the acquired businesses. The two differ by about ten
+# per cent and only the caption above the table tells them apart.
+#
+# Deere is the opposite case. Its required figure is a segment operating profit,
+# so no segment rule may be applied to it.
+
+metrics:
+  hd_net_sales:
+    synonyms:
+      - net sales
+      - total net sales
+    ignore_captions:
+      - segment
+
+  hd_adjusted_diluted_eps:
+    synonyms:
+      - diluted earnings per share
+      - diluted earnings per common share
+      - adjusted diluted earnings per share
+      - diluted
+
+  hd_comparable_sales_total_company:
+    synonyms:
+      - comparable sales
+      - total comparable sales
+      - comparable sales increase (decrease)
+      - comparable store sales increase
+      - comparable store sales
+      - comparable sales
+
+  adi_revenue:
+    synonyms:
+      - revenue
+      - revenues
+      - net revenue
+    ignore_captions:
+      - segment
+      - by product
+      - by end market
+
+  adi_adjusted_diluted_eps:
+    synonyms:
+      - diluted earnings per share
+      - diluted eps
+      - adjusted diluted eps
+      - diluted
+
+  adi_adjusted_gross_margin:
+    synonyms:
+      - gross margin
+      - gross margin percentage
+      - adjusted gross margin
+
+  has_net_fees:
+    synonyms:
+      - net fees
+      - net fees‡
+      - group net fees
+      - total net fees
+    # Hays reports each metric by division as well as for the group, and the
+    # divisional tables carry the same row labels. A divisional figure is a
+    # fraction of the group and must never stand in for it, so a table headed
+    # by one region is not read.
+    ignore_captions:
+      - germany
+      - united kingdom
+      - uk&i
+      - australia
+      - new zealand
+      - rest of world
+      - france
+      - switzerland
+      - divisional
+      - by division
+      - regional
+
+  has_pre_exceptional_basic_eps:
+    synonyms:
+      - basic earnings per share
+      - basic earnings per share‡
+      - basic eps
+    # Hays reports each metric by division as well as for the group, and the
+    # divisional tables carry the same row labels. A divisional figure is a
+    # fraction of the group and must never stand in for it, so a table headed
+    # by one region is not read.
+    ignore_captions:
+      - germany
+      - united kingdom
+      - uk&i
+      - australia
+      - new zealand
+      - rest of world
+      - france
+      - switzerland
+      - divisional
+      - by division
+      - regional
+
+  has_pre_exceptional_operating_profit:
+    # Hays marks the pre-exceptional line with a footnote dagger rather than
+    # spelling it out, so the dagger is part of the name we search for. The
+    # plain line is kept as well: it is the reported figure, and holding both
+    # lets the two be compared instead of quietly mixed.
+    synonyms:
+      - operating profit‡
+      - operating profit†
+      - pre-exceptional operating profit
+      - operating profit
+    # Hays reports each metric by division as well as for the group, and the
+    # divisional tables carry the same row labels. A divisional figure is a
+    # fraction of the group and must never stand in for it, so a table headed
+    # by one region is not read.
+    ignore_captions:
+      - germany
+      - united kingdom
+      - uk&i
+      - australia
+      - new zealand
+      - rest of world
+      - france
+      - switzerland
+      - divisional
+      - by division
+      - regional
+
+  de_worldwide_net_sales_and_revenues:
+    synonyms:
+      - total net sales and revenues
+      - net sales and revenues
+      - worldwide net sales and revenues
+    ignore_captions:
+      - segment
+
+  de_diluted_eps_gaap:
+    synonyms:
+      - diluted
+      - net income per share - diluted
+      - diluted earnings per share
+
+  de_production_precision_ag_operating_profit:
+    synonyms:
+      - production & precision agriculture
+      - production and precision agriculture
+      - production & precision ag
